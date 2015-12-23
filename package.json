@@ -6,7 +6,8 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "react-native": "^0.16.0",
-    "react-native-linear-gradient": "^1.3.0"
+    "react-native": "^0.17.0",
+    "react-native-linear-gradient": "^1.3.0",
+    "underscore": "^1.8.3"
   }
 }

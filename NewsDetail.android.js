@@ -4,44 +4,63 @@
 
 'use strict';
 
-var React = require('react-native');
+import React from 'react-native';
 
-var {
-	StyleSheet,
-	View,
-	Text,
-	WebView
-} = React;
+const {
+		Component,
+		StyleSheet,
+		View,
+		Text,
+        WebView
+	} = React;
 
-var NewsDetail = React.createClass({
-	getInitialState: function() {
-		return {
-			liked: false,
-			status: 'No Page Loaded',
-      		backButtonEnabled: false,
-      		forwardButtonEnabled: false,
-      		loading: true,
-      		scalesPageToFit: true,
+var HEADER = '#3b5998';
+var BGWASH = 'rgba(255,255,255,0.8)';
+var DISABLED_WASH = 'rgba(255,255,255,0.25)';
+
+var TEXT_INPUT_REF = 'urlInput';
+var WEBVIEW_REF = 'webview';
+var DEFAULT_URL = 'https://m.facebook.com';
+
+export class NewsDetail extends Component {
+
+	constructor(props) {
+		super(props);
+		this.state = {
+            url: DEFAULT_URL,
+            status: 'No Page Loaded',
+            backButtonEnabled: false,
+            forwardButtonEnabled: false,
+            loading: true,
+            scalesPageToFit: true,
 		};
-	},
-	render: function() {
-		return(
-			<View style={styles.container}>
-				<Text>WebView:{this.props.link}</Text>
-				<WebView  style={styles.webView} url={this.props.link} />
-			</View>
-		)
-	},
-});
+	}
 
-var styles = StyleSheet.create({
+	render() {
+        return (
+            <WebView
+                style={styles.webView}
+                url={this.props.post.url}/>
+        );
+	}
+
+    onNavigationStateChange() {
+
+    }
+
+    onShouldStartLoadWithRequest() {
+
+    }
+
+
+}
+
+const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		flexDirection: 'column'
 	},
 	webView: {
-	    height: 350,
-  },
+	    height: 350
+  }
 });
-
-module.exports = NewsDetail;
