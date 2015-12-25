@@ -22,7 +22,7 @@ import Static from './Static';
 import _ from 'underscore';
 
 // vars
-var page = 1;
+var page = 0;
 var _newsList = [];
 
 
@@ -40,25 +40,25 @@ export class NewsPager extends Component {
 
     componentDidMount() {
         this.fetchData(true);
-        setTimeout(()=>this.props.nav,5000);
     }
 
     /**
      * 根据页码获取
      * */
     fetchData(refresh) {
-        if (refresh) {
-            _newsList.lenth = 0;
-            page = 1;
-        } else {
-            page ++;
-        }
-
         console.log('=================================================');
         if (this.state.loading)
             return;
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-        this.setState({loading: true});
+        this.setState({
+            loading: true
+        });
+        if (refresh) {
+            _newsList.lenth = 0;
+            page = 1;
+        }
+        page ++;
+        // Start Fetching Data
         fetch(Static.getNewsUrlByPage(page))
             .then((response) => response.json())
             .then((responseData) => {
@@ -96,22 +96,19 @@ export class NewsPager extends Component {
      *
      * */
     renderNewsItem = (post, sectionID, rowID, hightlightRow) => {
-        console.log(sectionID, rowID);
         return (
-            <View>
-                <TouchableHighlight
-                    onPress={()=>this.onNewsItemPressed(post)}>
-                    <View style={styles.itemRow}>
-                        <Image
-                            source={{uri: post.custom_fields.thumb_c[0]}}
-                            style={styles.thumbnail}/>
-                        <View style={styles.rightContainer}>
-                            <Text style={styles.title}>{post.title}</Text>
-                            <Text style={styles.year}>{post.author.name} @ {post.date}</Text>
-                        </View>
+            <TouchableHighlight
+                onPress={()=>this.onNewsItemPressed(post)}>
+                <View style={styles.itemRow}>
+                    <Image
+                        source={{uri: post.custom_fields.thumb_c[0]}}
+                        style={styles.thumbnail}/>
+                    <View style={styles.rightContainer}>
+                        <Text style={styles.title}>{post.title}</Text>
+                        <Text style={styles.year}>{post.author.name} @ {post.date}</Text>
                     </View>
-                </TouchableHighlight>
-            </View>
+                </View>
+            </TouchableHighlight>
         );
     };
 

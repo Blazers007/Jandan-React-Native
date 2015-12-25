@@ -4,6 +4,7 @@
  */
 'use strict';
 
+// React 集成组件
 import React from 'react-native';
 const {
         Component,
@@ -18,13 +19,19 @@ const {
         BackAndroid
     } = React;
 
+// 渐变色组件
 import LinearGradient from 'react-native-linear-gradient';
+// TabLayout组件
+var ScrollableTabView = require('react-native-scrollable-tab-view');
 
+
+// 自身组件
 import {NewsPager} from './NewsPager.android';
-
 import {NewsDetail} from './NewsDetail.android';
+import {PicturePager} from './PicturePager';
+import {DuanziPager} from './DuanziPager.android';
 
-
+// 全局变量
 var _navigator;
 BackAndroid.addEventListener('hardwareBackPress', function() {
     if (_navigator && _navigator.getCurrentRoutes().length > 1) {
@@ -34,7 +41,7 @@ BackAndroid.addEventListener('hardwareBackPress', function() {
     return false;
 });
 
-// Const
+// Const 常量
 const toolbarActions = [
     {title: '离线阅读', icon: require('image!ic_inbox_black_18dp'), show: 'always'}
 ];
@@ -98,6 +105,11 @@ class l1 extends Component{
     }
 
     /**
+     *
+     * <NewsPager nav={navigationOperations}/>
+     *
+     * <LinearGradient colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0)']} style={styles.shadow}/>
+     *
      * Router and Navigator
      * */
     routeMapper(route, navigationOperations, onComponentRef) {
@@ -128,8 +140,16 @@ class l1 extends Component{
                                 actions = {toolbarActions}
                                 onIconClicked={() => this.refs.drawer.openDrawer()}
                                 onActionSelected={this.onActionSelected}/>
-                            <LinearGradient colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0)']} style={styles.shadow}/>
-                            <NewsPager nav={navigationOperations}/>
+                            <ScrollableTabView
+                                style={styles.tabBar}
+                                tabBarUnderlineColor='#434343'
+                                tabBarActiveTextColor='#343434'
+                                tabBarInactiveTextColor='#989898'>
+                                <NewsPager tabLabel="新鲜事" nav={navigationOperations}/>
+                                <PicturePager tabLabel="无聊图" type="wuliao"/>
+                                <DuanziPager tabLabel="段子" type="wuliao"/>
+                                <PicturePager tabLabel="梅志图" type="meizhi"/>
+                            </ScrollableTabView>
                         </View>
                     </DrawerLayoutAndroid>
                 </DrawerLayoutAndroid>
@@ -152,6 +172,10 @@ const styles = StyleSheet.create({
     toolbar: {
         backgroundColor: "#fafafa",
         height: 56,
+    },
+    tabBar: {
+        backgroundColor: "#fafafa",
+        height: 40
     },
     shadow: {
         height: 4
