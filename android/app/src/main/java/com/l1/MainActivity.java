@@ -24,6 +24,7 @@ import com.facebook.soloader.SoLoader;
 
 // React-Native LinearGradient
 import com.BV.LinearGradient.LinearGradientPackage;
+import com.burnweb.rnwebview.RNWebViewPackage;
 import com.l1.auto.ARImageManager;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModuleName("index.android")
                 .addPackage(new MainReactPackage())
+                .addPackage(new RNWebViewPackage())
                 .addPackage(new LinearGradientPackage()) // <---- React-Native LinearGradient
                 .addPackage(new ARReactPackage()) // < ----- NestedPackage
                 .setUseDeveloperSupport(BuildConfig.DEBUG)

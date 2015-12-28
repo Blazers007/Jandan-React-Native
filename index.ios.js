@@ -6,48 +6,62 @@
 
 var React = require('react-native');
 var {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-} = React;
+    AppRegistry,
+    StyleSheet,
+    TabBarIOS,
+    Text,
+    View,
+    Image,
+    } = React;
 
-var l1 = React.createClass({
-  render: function() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
-    );
-  }
-});
+// TabLayout组件
+import {NewsPager} from './NewsPager.js';
+import {DuanziPager} from './DuanziPager.js';
+import {PicturePager} from './PicturePager.ios';
+
+class l1 extends React.Component {
+
+    constructor() {
+        super();
+        this.state = {
+            selectedTab: 'News'
+        }
+    }
+
+    render() {
+        return (
+            <TabBarIOS style={{marginTop: 30}}>
+                <TabBarIOS.Item
+                    title="新鲜事"
+                    selected={this.state.selectedTab === 'News'}
+                    onPress={()=>this.setState({selectedTab: 'News'})}
+                    icon={require('image!news')}>
+                    <NewsPager style={{flex:1}}/>
+                </TabBarIOS.Item>
+                <TabBarIOS.Item
+                    title="段子"
+                    selected={this.state.selectedTab === 'Duanzi'}
+                    onPress={()=>this.setState({selectedTab: 'Duanzi'})}
+                    icon={require('image!duanzi')}>
+                    <DuanziPager/>
+                </TabBarIOS.Item>
+                <TabBarIOS.Item
+                    title="无聊图"
+                    selected={this.state.selectedTab === 'Wuliao'}
+                    onPress={()=>this.setState({selectedTab: 'Wuliao'})}
+                    icon={require('image!picture')}>
+                    <PicturePager type="wuliao"/>
+                </TabBarIOS.Item>
+            </TabBarIOS>
+        );
+    }
+}
 
 var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+    tabBar: {
+        backgroundColor: "#fff",
+        height: 32
+    },
 });
 
 AppRegistry.registerComponent('l1', () => l1);

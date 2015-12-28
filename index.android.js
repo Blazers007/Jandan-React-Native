@@ -26,10 +26,10 @@ var ScrollableTabView = require('react-native-scrollable-tab-view');
 
 
 // 自身组件
-import {NewsPager} from './NewsPager.android';
+import {NewsPager} from './NewsPager.js';
 import {NewsDetail} from './NewsDetail.android';
-import {PicturePager} from './PicturePager';
-import {DuanziPager} from './DuanziPager.android';
+import {PicturePager} from './PicturePager.android';
+import {DuanziPager} from './DuanziPager.js';
 
 // 全局变量
 var _navigator;

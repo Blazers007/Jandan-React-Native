@@ -70,7 +70,6 @@ export class NewsPager extends Component {
                 _newsList = posts;
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(_newsList), // 该方法 将 原有的dataSource对象拷贝 并添加了Rows属性
-                    loading: false
                 });
             })
             .catch((error) => console.warn(error))
@@ -114,11 +113,11 @@ export class NewsPager extends Component {
 
     onNewsItemPressed(post) {
         console.log(post.url);
-        this.props.nav.push({
-            title: post.title,
-            name: 'news',
-            post: post
-        });
+        //this.props.nav.push({
+        //    title: post.title,
+        //    name: 'news',
+        //    post: post
+        //});
     }
 }
 

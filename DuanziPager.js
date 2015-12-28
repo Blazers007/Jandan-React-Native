@@ -37,6 +37,8 @@ export class DuanziPager extends Component {
 	}
 
 	fetchData(refresh) {
+        if (this.state.loading)
+            return;
 		// Start Loading
 		// 设置更新状态
 		if (refresh) {
@@ -58,7 +60,6 @@ export class DuanziPager extends Component {
 				});
 				this.setState({
 					dataSource: this.state.dataSource.cloneWithRows(post),
-					loading: false,
 					_duanziList: post
 				});
 			})
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
     text: {
         marginLeft: 16,
         marginRight: 12,
+		marginBottom: 4,
         color: '#222',
         fontSize: 14,
         lineHeight: 22
