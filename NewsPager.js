@@ -113,11 +113,11 @@ export class NewsPager extends Component {
 
     onNewsItemPressed(post) {
         console.log(post.url);
-        //this.props.nav.push({
-        //    title: post.title,
-        //    name: 'news',
-        //    post: post
-        //});
+        this.props.nav.push({
+            title: post.title,
+            name: 'news',
+            post: post
+        });
     }
 }
 

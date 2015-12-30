@@ -6,6 +6,9 @@
 
 import React from 'react-native';
 
+var WebViewAndroid = require('react-native-webview-android');
+import Static from './Static';
+
 const {
 		Component,
 		StyleSheet,
@@ -14,33 +17,59 @@ const {
         WebView
 	} = React;
 
-var HEADER = '#3b5998';
-var BGWASH = 'rgba(255,255,255,0.8)';
-var DISABLED_WASH = 'rgba(255,255,255,0.25)';
-
-var TEXT_INPUT_REF = 'urlInput';
-var WEBVIEW_REF = 'webview';
-var DEFAULT_URL = 'https://m.facebook.com';
+var SITE_URL = 'https://www.baidu.com';
 
 export class NewsDetail extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-            url: DEFAULT_URL,
+        this.state =  {
+            url: SITE_URL,
             status: 'No Page Loaded',
             backButtonEnabled: false,
             forwardButtonEnabled: false,
             loading: true,
-            scalesPageToFit: true,
-		};
+            htmlString: null
+        };
 	}
 
+    componentDidMount() {
+        fetch(Static.getNewsContentUrl(this.props.post.id))
+            .then(response => response.json())
+            .then(responseData => {
+                this.setState({
+                    htmlString: responseData.post.content
+                })
+            })
+            .catch(error => console.warn(error))
+            .done();
+    }
+
+    /**
+     * //+ '<link rel=\"stylesheet\" type=\"text/css\" href=\"file:///android_asset/css/style.css\" />'
+     //+ '<script src=\"file:///android_asset/js/main.js\" type=\"text/javascript\"></script>'
+     * */
 	render() {
+        if (this.state.htmlString) {
+            let string = '<!DOCTYPE html><html><body><head>'
+                        + '</head>'
+                        + this.state.htmlString
+                        + '</body></html>';
+            return (
+                <WebViewAndroid
+                    ref="webViewAndroidSample"
+                    javaScriptEnabled={true}
+                    geolocationEnabled={false}
+                    builtInZoomControls={false}
+                    onNavigationStateChange={this.onNavigationStateChange}
+                    html={string}
+                    style={styles.containerWebView} />
+            );
+        }
         return (
-            <WebView
-                style={styles.webView}
-                url={this.props.post.url}/>
+            <View style={styles.containerWebView}>
+                <Text>Loading。。。</Text>
+            </View>
         );
 	}
 
@@ -56,11 +85,7 @@ export class NewsDetail extends Component {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		flexDirection: 'column'
-	},
-	webView: {
-	    height: 350
-  }
+    containerWebView: {
+        flex: 1,
+    }
 });

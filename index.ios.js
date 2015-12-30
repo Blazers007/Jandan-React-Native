@@ -57,7 +57,7 @@ class l1 extends React.Component {
     }
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     tabBar: {
         backgroundColor: "#fff",
         height: 32

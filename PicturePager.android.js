@@ -15,6 +15,7 @@ const {
         Text,
         Image,
         View,
+        TouchableHighlight,
     } = React;
 
 import Static from './Static';
@@ -112,7 +113,11 @@ export class PicturePager extends Component {
             return (
                 <CardItem>
                     <CardUpperExtra post={post} shared={false} />
-                    <ARImage src={post.pic}/>
+                    <TouchableHighlight onPress={()=>this.onImagePress(post.pic)}>
+                        <View>
+                            <ARImage src={post.pic}/>
+                        </View>
+                    </TouchableHighlight>
                     <Text style={styles.text}>        {post.comment.trim()}</Text>
                     <CardBottomExtra/>
                 </CardItem>
@@ -121,11 +126,23 @@ export class PicturePager extends Component {
         return (
             <CardItem>
                 <CardUpperExtra post={post} shared={false} />
-                <ARImage src={post.pic}/>
+                <TouchableHighlight onPress={()=>this.onImagePress(post.pic)}>
+                    <View>
+                        <ARImage src={post.pic}/>
+                    </View>
+                </TouchableHighlight>
                 <CardBottomExtra/>
             </CardItem>
         )
     };
+
+    onImagePress(uri) {
+        this.props.nav.push({
+            title: 'Image',
+            name: 'image',
+            uri: uri
+        });
+    }
 
     onImageLoaded(width, height) {
         console.log(width. height);

@@ -10,26 +10,11 @@ const {
         Component,
         AppRegistry,
         StyleSheet,
-        Text,
-        View,
-        DrawerLayoutAndroid,
-        ToolbarAndroid,
         Animated,
         Navigator,
-        BackAndroid
+        BackAndroid,
+        Text
     } = React;
-
-// 渐变色组件
-import LinearGradient from 'react-native-linear-gradient';
-// TabLayout组件
-var ScrollableTabView = require('react-native-scrollable-tab-view');
-
-
-// 自身组件
-import {NewsPager} from './NewsPager.js';
-import {NewsDetail} from './NewsDetail.android';
-import {PicturePager} from './PicturePager.android';
-import {DuanziPager} from './DuanziPager.js';
 
 // 全局变量
 var _navigator;
@@ -41,10 +26,18 @@ BackAndroid.addEventListener('hardwareBackPress', function() {
     return false;
 });
 
-// Const 常量
-const toolbarActions = [
-    {title: '离线阅读', icon: require('image!ic_inbox_black_18dp'), show: 'always'}
+// Const
+const NavMenuItems = [
+    {text:'阅读', icon: require('image!ic_mood_black_24dp')},
+    {text:'收藏', icon: require('image!ic_favorite_black_24dp')},
+    {text:'设置', icon: require('image!ic_settings_black_24dp')}
 ];
+
+// Menu
+import {NavMenu} from './NavMenu.android';
+// Scene
+import ReadingScene from './ReadingPage';
+import FavoriteScene from './FavoritePage';
 
 class l1 extends Component{
 
@@ -63,7 +56,7 @@ class l1 extends Component{
             this.state.bounceValue,                 // Animate `bounceValue`
             {
                 toValue: 0.8,                         // Animate to smaller size
-                friction: 1,                          // Bouncier spring
+                friction: 1                     // Bouncier spring
             }
         ).start();
         setTimeout(()=>this.setState({loaded: true}), 2000);
@@ -74,18 +67,14 @@ class l1 extends Component{
         if (!this.state.loaded) {
             return this.renderLoadingView();
         }
-
+        // Loading Complete
         return (
             <Navigator
-                style={styles.container}
+                style={{flex: 1}}
                 initialRoute={{name: 'home'}}
                 configureScene={()=>Navigator.SceneConfigs.FadeAndroid}
                 renderScene={this.routeMapper}/>
         )
-    }
-
-    onActionSelected(position) {
-        //
     }
 
     /**
@@ -98,10 +87,20 @@ class l1 extends Component{
                 style={{
           flex: 1,
           transform: [                        // `transform` is an ordered array
-            {scale: this.state.bounceValue},  // Map `bounceValue` to `scale`
+            {scale: this.state.bounceValue}  // Map `bounceValue` to `scale`
           ]
         }}/>
         )
+    }
+
+    renderNavDrawerMenu(index) {
+        return (
+            <NavMenu navListItems={NavMenuItems} selectNavIndex={index} onPress={this.onNavMenuListItemPressed}/>
+        )
+    }
+
+    onNavMenuListItemPressed(index) {
+        console.warn(index);
     }
 
     /**
@@ -111,75 +110,22 @@ class l1 extends Component{
      * <LinearGradient colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0)']} style={styles.shadow}/>
      *
      * Router and Navigator
+     *
+     * TODO:修改renderNavMenu的方法 更精简 更外围控制！ 不需要Scene内部再复写
+     *
      * */
-    routeMapper(route, navigationOperations, onComponentRef) {
+    routeMapper = (route, navigationOperations, onComponentRef) => {
         _navigator = navigationOperations;
         if (route.name === 'home') {
-            var navigationView = (
-                <View style={{flex: 1, backgroundColor: '#fff'}}>
-                    <Text style={{margin: 10, fontSize: 15, textAlign: 'left'}}>I'm in the Drawer!'</Text>
-                </View>
-            );
-            return (
-                <DrawerLayoutAndroid
-                    ref='drawer'
-                    drawerWidth={300}
-                    drawerPosition={DrawerLayoutAndroid.positions.Left}
-                    renderNavigationView={() => navigationView}>
-                    <DrawerLayoutAndroid
-                        ref='drawerRight'
-                        drawerWidth={200}
-                        drawerPosition={DrawerLayoutAndroid.positions.Right}
-                        renderNavigationView={() => navigationView}>
-                        <View style={styles.container}>
-                            <ToolbarAndroid
-                                navIcon={require('image!ic_menu_black_18dp')}
-                                title='煎蛋阅读'
-                                titleColor='black'
-                                style={styles.toolbar}
-                                actions = {toolbarActions}
-                                onIconClicked={() => this.refs.drawer.openDrawer()}
-                                onActionSelected={this.onActionSelected}/>
-                            <ScrollableTabView
-                                style={styles.tabBar}
-                                tabBarUnderlineColor='#434343'
-                                tabBarActiveTextColor='#343434'
-                                tabBarInactiveTextColor='#989898'>
-                                <NewsPager tabLabel="新鲜事" nav={navigationOperations}/>
-                                <PicturePager tabLabel="无聊图" type="wuliao"/>
-                                <DuanziPager tabLabel="段子" type="wuliao"/>
-                                <PicturePager tabLabel="梅志图" type="meizhi"/>
-                            </ScrollableTabView>
-                        </View>
-                    </DrawerLayoutAndroid>
-                </DrawerLayoutAndroid>
-            )
+            return (<ReadingScene nav={navigationOperations} index={0} renderNavDrawer={this.renderNavDrawerMenu} />)
+        } else if(route.name === 'favorite'){
+            return (<FavoriteScene nav={navigationOperations} index={1} renderNavDrawer={this.renderNavDrawerMenu}/>)
         } else if (route.name === 'news') {
-            return (
-                <NewsDetail style={styles.container} post={route.post}/>
-            )
+            return (<NewsDetail style={styles.container} post={route.post}/>)
+        } else if (route.name === 'image') {
+            return (<ImageLightBox uri={route.uri} navigator={navigationOperations}/>)
         }
-    }
-
+    };
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: '#fff',
-    },
-    toolbar: {
-        backgroundColor: "#fafafa",
-        height: 56,
-    },
-    tabBar: {
-        backgroundColor: "#fafafa",
-        height: 40
-    },
-    shadow: {
-        height: 4
-    }
-});
 
 AppRegistry.registerComponent('l1', () => l1);
