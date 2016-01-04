@@ -15,7 +15,7 @@ const {
 
 var LightBox = require('react-native-lightbox');
 
-export class ImageLightBox extends Component {
+export default class ImageLightBox extends Component {
     constructor(){
         super();
     }

@@ -19,7 +19,7 @@ const {
 
 var SITE_URL = 'https://www.baidu.com';
 
-export class NewsDetail extends Component {
+export default class NewsDetail extends Component {
 
 	constructor(props) {
 		super(props);

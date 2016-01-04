@@ -8,6 +8,7 @@ const {
 	Text,
 	View,
 	Image,
+	PullToRefreshViewAndroid,
 } = React;
 
 import Static from './Static';
@@ -19,7 +20,7 @@ import {CardBottomExtra} from './CardBottomExtra';
 var page = 0;
 var _duanziList = [];
 
-export class DuanziPager extends Component {
+export default class DuanziPager extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -83,7 +84,7 @@ export class DuanziPager extends Component {
                     post={post}
                     shared={false}/>
                 <Text style={styles.text}>        {post.comment_content}</Text>
-                <CardBottomExtra/>
+                <CardBottomExtra post={post} type='duanzi' />
 			</CardItem>
 		)
 	}

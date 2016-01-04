@@ -13,10 +13,14 @@ const {
         Text,
     } = React;
 
+// 渐变色组件
+import LinearGradient from 'react-native-linear-gradient';
+// TabLayout组件
+var ScrollableTabView = require('react-native-scrollable-tab-view');
 
 // Var Let 变量
 let currentPager = 0;
-export class FavoritePage extends Component {
+export default class FavoritePage extends Component {
 
     render() {
         return(
@@ -24,14 +28,14 @@ export class FavoritePage extends Component {
                 ref='drawer'
                 drawerWidth={300}
                 drawerPosition={DrawerLayoutAndroid.positions.Left}
-                renderNavigationView={() => navigationView}>
+                renderNavigationView={() => this.props.navDrawer}>
                 <View style={styles.container}>
                     <ToolbarAndroid
                         navIcon={require('image!ic_menu_black_18dp')}
                         title='我的收藏'
                         titleColor='black'
                         style={styles.toolbar}
-                        onIconClicked={() => this.refs.drawer.openDrawer()}
+                        onIconClicked={this.props.openDrawer}
                         onActionSelected={this.onActionSelected}/>
                     <ScrollableTabView
                         initialPage={currentPager}

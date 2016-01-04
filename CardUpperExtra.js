@@ -21,7 +21,7 @@ const {
         Text,
         View,
         Image,
-        TouchableHighlight
+        TouchableWithoutFeedback
     } = React;
 
 export class CardUpperExtra extends Component {
@@ -42,11 +42,14 @@ export class CardUpperExtra extends Component {
                         <Text style={styles.author}>@{this.props.post.comment_author}</Text>
                         <Text style={styles.date}>{this.calculateDate(this.props.post.comment_date)}</Text>
                     </View>
-                    <TouchableHighlight>
+                    <TouchableWithoutFeedback
+                        onPressIn={()=>this.setState({shared: true})}
+                        onPressOut={()=>this.setState({shared: this.props.shared})}
+                        onPress={()=>this.shareThisPost()}>
                         <Image
                             style={styles.share}
                             source={icon}/>
-                    </TouchableHighlight>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
         )
@@ -54,6 +57,10 @@ export class CardUpperExtra extends Component {
 
     calculateDate(date) {
         return date;
+    }
+
+    shareThisPost() {
+
     }
 }
 

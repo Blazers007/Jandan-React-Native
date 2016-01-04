@@ -17,7 +17,7 @@ const {
         Text,
         Image,
         StyleSheet,
-        TouchableHighlight,
+        TouchableWithoutFeedback,
     } = React;
 
 export class CardBottomExtra extends Component {
@@ -26,7 +26,8 @@ export class CardBottomExtra extends Component {
         this.state = {
             liked: this.props.liked || false,
             disliked: this.props.disliked || false,
-            favorite: this.props.favorite || false
+            favorite: this.props.favorite || false,
+            commentPressed: false
         }
     }
 
@@ -34,46 +35,63 @@ export class CardBottomExtra extends Component {
         let up = this.state.liked ? require('image!ic_thumb_up_16dp') : require('image!ic_thumb_up_grey600_16dp');
         let down = this.state.disliked ? require('image!ic_thumb_down_16dp') : require('image!ic_thumb_down_grey600_16dp');
         let fav = this.state.favorite ? require('image!ic_favorite_16dp') : require('image!ic_favorite_grey600_16dp');
-        let comment = require('image!ic_comment_grey600_16dp');
+        let comment = this.state.commentPressed ? require('image!ic_comment_16dp') : require('image!ic_comment_grey600_16dp');
         return (
-            <View style={{marginTop: 4}}>
+            <View>
                 <View style={styles.divider}/>
                 <View style={styles.container}>
                     <View style={styles.leftContainer}>
-                        <TouchableHighlight style={styles.badgeViewTouchable}>
+                        <TouchableWithoutFeedback
+                            onPressIn={()=>this.setState({liked: true})}
+                            onPressOut={()=>this.setState({liked: this.props.liked})}
+                            onPress={()=>console.log('pressed')}
+                            style={styles.badgeViewTouchable}>
                             <View style={styles.badgeView}>
                                 <Image
                                     source={up}
                                     style={styles.image}/>
-                                <Text style={styles.badge}>0</Text>
+                                <Text style={[styles.badge, this.state.liked&&{color: '#0f9bf5'}]}>0</Text>
                             </View>
-                        </TouchableHighlight>
-                        <TouchableHighlight style={styles.badgeViewTouchable}>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback
+                            onPressIn={()=>this.setState({disliked: true})}
+                            onPressOut={()=>this.setState({disliked: this.props.disliked})}
+                            style={styles.badgeViewTouchable}>
                         <View style={styles.badgeView}>
                                 <Image
                                     source={down}
                                     style={styles.image}/>
-                                <Text style={styles.badge}>0</Text>
+                                <Text style={[styles.badge, this.state.disliked&&{color: '#ff3234'}]}>0</Text>
                             </View>
-                        </TouchableHighlight>
-                        <TouchableHighlight style={styles.badgeViewTouchable}>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback
+                            onPressIn={()=>this.setState({commentPressed: true})}
+                            onPressOut={()=>this.setState({commentPressed: false})}
+                            style={styles.badgeViewTouchable}>
                         <View style={styles.badgeView}>
                                 <Image
                                     source={comment}
                                     style={styles.image}/>
-                                <Text style={styles.badge}>0</Text>
+                                <Text style={[styles.badge, this.state.commentPressed&&{color: '#4bbb59'}]}>0</Text>
                             </View>
-                        </TouchableHighlight>
+                        </TouchableWithoutFeedback>
                     </View>
-                    <TouchableHighlight>
+                    <TouchableWithoutFeedback
+                        onPressIn={()=>this.setState({favorite: true})}
+                        onPressOut={()=>this.setState({favorite: this.props.favorite})}
+                        onPress={()=>{this.setFavoriteOrNot()}}>
                         <Image
                             source={fav}
                             style={styles.image}/>
-                    </TouchableHighlight>
+                    </TouchableWithoutFeedback>
                 </View>
                 <View style={styles.divider}/>
             </View>
         )
+    }
+
+    setFavoriteOrNot() {
+
     }
 }
 
@@ -94,8 +112,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     badge: {
-        color: '#757575',
-        fontSize: 12
+        fontSize: 12,
+        color: '#757575'
     },
     image: {
         width: 16,

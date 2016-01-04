@@ -16,6 +16,7 @@ const {
         Image,
         View,
         TouchableHighlight,
+        PullToRefreshViewAndroid,
     } = React;
 
 import Static from './Static';
@@ -27,7 +28,7 @@ import {CardItem} from './CardItem';
 import {CardUpperExtra} from './CardUpperExtra';
 import {CardBottomExtra} from './CardBottomExtra';
 
-export class PicturePager extends Component {
+export default class PicturePager extends Component {
 
     /**
      * this.props.type 区别类型
@@ -109,7 +110,7 @@ export class PicturePager extends Component {
      * */
     renderPictureItem = (post, secId, rowId) => {
         console.log(post.comment, post.comment.length);
-        if (post.comment && post.comment.lenth > 0) {
+        if (post.comment && post.comment.trim().length > 0) {
             return (
                 <CardItem>
                     <CardUpperExtra post={post} shared={false} />
@@ -165,6 +166,8 @@ const styles = StyleSheet.create({
     text: {
         marginLeft: 16,
         marginRight: 12,
+        marginTop:8,
+        marginBottom: 8,
         color: '#222',
         fontSize: 14,
         lineHeight: 22

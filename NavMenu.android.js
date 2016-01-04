@@ -8,35 +8,54 @@ const {
         Component,
         StyleSheet,
         View,
+        ScrollView,
         Text,
         Image,
-        TouchableHighlight
+        TouchableNativeFeedback,
+        InteractionManager
     } = React;
 
-export class NavMenu extends Component {
+export default class NavMenu extends Component {
     constructor(props) {
         super(props);
+        this.state= {
+            selectNavIndex: this.props.selectNavIndex | 0
+        }
     }
     render() {
         let list = this.props.navListItems.map((item, index) => {
             return (
-                <TouchableHighlight onPress={()=>this.props.onPress(index)} key={index}>
+                <TouchableNativeFeedback
+                    background={TouchableNativeFeedback.Ripple()}
+                    onPress={()=>this._handleClick(index)}
+                    key={index}>
                     <View style={styles.item}>
                         <Image
                             style={styles.itemIcon}
                             source={item.icon}/>
-                        <Text style={index === this.props.selectNavIndex ? styles.itemSelectedText : styles.itemText}>{item.text}</Text>
+                        <Text style={index === this.state.selectNavIndex ? styles.itemSelectedText : styles.itemText}>{item.text}</Text>
                     </View>
-                </TouchableHighlight>
+                </TouchableNativeFeedback>
             )
         });
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <View style={styles.header}>
                 </View>
                 {list}
-            </View>
+            </ScrollView>
         )
+    }
+
+    _handleClick(index) {
+        InteractionManager.runAfterInteractions(()=>{
+            this.props.onPress(index);
+            if (index !== this.state.selectNavIndex) {
+                this.setState({
+                    selectNavIndex: index
+                });
+            }
+        });
     }
 }
 
@@ -51,10 +70,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#328bff'
     },
     item: {
-        flex: 1,
         height: 48,
         flexDirection: 'row',
-        marginLeft: 16,
+        paddingLeft: 16,
         alignItems: 'center'
     },
     itemIcon: {

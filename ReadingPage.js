@@ -18,16 +18,12 @@ import LinearGradient from 'react-native-linear-gradient';
 // TabLayout组件
 var ScrollableTabView = require('react-native-scrollable-tab-view');
 
-
 // -- 自身组件
-import {NewsPager} from './NewsPager.js';
-import {NewsDetail} from './NewsDetail.android';
+import NewsPager from './NewsPager.js';
+import PicturePager from './PicturePager.android';
+import DuanziPager from './DuanziPager.js';
 
-import {PicturePager} from './PicturePager.android';
-import {ImageLightBox} from './ImageLightBox';
-
-import {DuanziPager} from './DuanziPager.js';
-
+var Test = require('./Test');
 
 // Const 常量
 const toolbarActions = [
@@ -38,43 +34,35 @@ let currentPager = 0;
 
 export default class ReadingPage extends Component {
 
-
-
     render() {
         return (
             <DrawerLayoutAndroid
-                ref='drawer'
-                drawerWidth={300}
-                drawerPosition={DrawerLayoutAndroid.positions.Left}
-                renderNavigationView={() => this.props.renderNavDrawer(this.props.index)}>
-                <DrawerLayoutAndroid
-                    ref='drawerRight'
-                    drawerWidth={200}
-                    drawerPosition={DrawerLayoutAndroid.positions.Right}
-                    renderNavigationView={() => this.renderDownload()}>
-                    <View style={styles.container}>
-                        <ToolbarAndroid
-                            navIcon={require('image!ic_menu_black_18dp')}
-                            title='煎蛋阅读'
-                            titleColor='black'
-                            style={styles.toolbar}
-                            actions = {toolbarActions}
-                            onIconClicked={() => this.refs.drawer.openDrawer()}
-                            onActionSelected={this.onActionSelected}/>
-                        <ScrollableTabView
-                            initialPage={currentPager}
-                            onChangeTab={(state)=>this.setSelectPager(state)}
-                            style={styles.tabBar}
-                            tabBarUnderlineColor='#434343'
-                            tabBarActiveTextColor='#343434'
-                            tabBarInactiveTextColor='#989898'>
-                            <NewsPager tabLabel="新鲜事" nav={this.props.nav}/>
-                            <PicturePager tabLabel="无聊图" nav={this.props.nav} type="wuliao"/>
-                            <DuanziPager tabLabel="段子" type="wuliao"/>
-                            <PicturePager tabLabel="梅志图" type="meizhi"/>
-                        </ScrollableTabView>
-                    </View>
-                </DrawerLayoutAndroid>
+                ref='drawerRight'
+                drawerWidth={200}
+                drawerPosition={DrawerLayoutAndroid.positions.Right}
+                renderNavigationView={() => this.renderDownload()}>
+                <View style={styles.container}>
+                    <ToolbarAndroid
+                        navIcon={require('image!ic_menu_black_18dp')}
+                        title='煎蛋阅读'
+                        titleColor='black'
+                        style={styles.toolbar}
+                        actions = {toolbarActions}
+                        onIconClicked={this.props.openDrawer}
+                        onActionSelected={this.onActionSelected}/>
+                    <ScrollableTabView
+                        initialPage={currentPager}
+                        onChangeTab={(state)=>this.setSelectPager(state)}
+                        style={styles.tabBar}
+                        tabBarUnderlineColor='#434343'
+                        tabBarActiveTextColor='#343434'
+                        tabBarInactiveTextColor='#989898'>
+                        <NewsPager tabLabel="新鲜事" nav={this.props.nav}/>
+                        <PicturePager tabLabel="无聊图" nav={this.props.nav} type="wuliao"/>
+                        <DuanziPager tabLabel="段子" nav={this.props.nav} type="wuliao"/>
+                        <PicturePager tabLabel="梅志图" nav={this.props.nav} type="meizhi"/>
+                    </ScrollableTabView>
+                </View>
             </DrawerLayoutAndroid>
         )
     }

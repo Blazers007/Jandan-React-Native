@@ -15,9 +15,11 @@ const {
         View,
         Image,
         ListView,
-        TouchableHighlight
+        PullToRefreshViewAndroid,
+        TouchableNativeFeedback,
+        InteractionManager,
+        AsyncStorage
     } = React;
-
 import Static from './Static';
 import _ from 'underscore';
 
@@ -25,8 +27,7 @@ import _ from 'underscore';
 var page = 0;
 var _newsList = [];
 
-
-export class NewsPager extends Component {
+export default class NewsPager extends Component {
 
     constructor(props) {
         super(props);
@@ -39,17 +40,26 @@ export class NewsPager extends Component {
     }
 
     componentDidMount() {
-        this.fetchData(true);
+        //this.fetchData(true);
+        AsyncStorage.getItem('news', (err, str)=>{
+            let _newsList = JSON.parse(str);
+            this.setState({
+                dataSource: this.state.dataSource.cloneWithRows(_newsList), // 该方法 将 原有的dataSource对象拷贝 并添加了Rows属性
+                loading: false
+            });
+        });
+        //
+
     }
 
     /**
      * 根据页码获取
      * */
     fetchData(refresh) {
-        console.log('=================================================');
+        console.log('======================TRY TO REFRESH===========================');
         if (this.state.loading)
             return;
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>SURE TO REFRESH>>>>>>>>>>>>>>>>>>>>>>>>>');
         this.setState({
             loading: true
         });
@@ -68,11 +78,22 @@ export class NewsPager extends Component {
                    posts.push(post);
                 });
                 _newsList = posts;
+                // 存储到AsyncStorage
+                AsyncStorage.setItem('news', JSON.stringify(_newsList),(err)=>{
+                    console.log('Done');
+                });
+                //
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(_newsList), // 该方法 将 原有的dataSource对象拷贝 并添加了Rows属性
+                    loading: false
                 });
             })
-            .catch((error) => console.warn(error))
+            .catch((error) => {
+                console.warn(error);
+                this.setState({
+                    loading: false
+                });
+            })
             .done();
     }
 
@@ -81,10 +102,17 @@ export class NewsPager extends Component {
      * */
     render() {
         return(
-            <ListView
-                dataSource={this.state.dataSource}
-                renderRow={this.renderNewsItem}
-                onEndReached={()=>this.fetchData(false)}/>
+            <PullToRefreshViewAndroid
+                style={styles.container}
+                refreshing={this.state.loading}
+                onRefresh={()=>this.fetchData(true)}
+                colors={['#000']}
+                progressBackgroundColor={'#fff'}>
+                <ListView
+                    dataSource={this.state.dataSource}
+                    renderRow={this.renderNewsItem}
+                    onEndReached={()=>this.fetchData(false)}/>
+            </PullToRefreshViewAndroid>
         )
     }
 
@@ -96,7 +124,8 @@ export class NewsPager extends Component {
      * */
     renderNewsItem = (post, sectionID, rowID, hightlightRow) => {
         return (
-            <TouchableHighlight
+            <TouchableNativeFeedback
+                background={TouchableNativeFeedback.Ripple()}
                 onPress={()=>this.onNewsItemPressed(post)}>
                 <View style={styles.itemRow}>
                     <Image
@@ -107,17 +136,19 @@ export class NewsPager extends Component {
                         <Text style={styles.year}>{post.author.name} @ {post.date}</Text>
                     </View>
                 </View>
-            </TouchableHighlight>
+            </TouchableNativeFeedback>
         );
     };
 
     onNewsItemPressed(post) {
         console.log(post.url);
-        this.props.nav.push({
-            title: post.title,
-            name: 'news',
-            post: post
-        });
+        InteractionManager.runAfterInteractions(()=>{
+            this.props.nav.push({
+                title: post.title,
+                name: 'news',
+                post: post
+            });
+        })
     }
 }
 
@@ -125,6 +156,9 @@ export class NewsPager extends Component {
  * Styles
  * */
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
     itemRow: {
         flex: 1,
         flexDirection: 'row',
