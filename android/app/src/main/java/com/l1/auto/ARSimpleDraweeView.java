@@ -97,7 +97,7 @@ public class ARSimpleDraweeView extends SimpleDraweeView {
 
         @Override
         public void onRelease(String s) {
-            Log.i("Release Image", s);
+            // Log.i("Release Image", s);
         }
     }
 

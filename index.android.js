@@ -19,7 +19,7 @@ const {
     } = React;
 
 // 全局变量
-var _navigator, _drawer;
+var _navigator, _drawer; //_drawer暂不使用
 
 /**
  * 注册back事件监听  返回false代表未处理 则会被默认行为处理(也就是结束)
@@ -85,8 +85,6 @@ class l1 extends Component{
         //    }
         //).start();
         //setTimeout(()=>this.setState({loaded: true}), 2000);
-        if (this.refs.drawer)
-            _drawer = this.refs.drawer;
     }
 
 
@@ -133,15 +131,13 @@ class l1 extends Component{
         // 关闭Drawer
         _drawer.closeDrawer();
         let aboutToJump = NavMenuItems[index].tag;
-        let indexOf = -1;
-        if(_navigator.getCurrentRoutes().some((item, index)=>{
-                if(item.name === aboutToJump){
-                    indexOf = index;
-                    return true;
-                }
-            })) {
+        // 寻找target
+        let target = _navigator.getCurrentRoutes().find((item)=>{
+            return item.name === aboutToJump;
+        });
+        if(target) {
             // JUMP
-            _navigator.jumpTo(_navigator.getCurrentRoutes()[indexOf]);
+            _navigator.jumpTo(target);
         } else {
             // PUSH
             _navigator.push({
@@ -155,8 +151,9 @@ class l1 extends Component{
      * 提供给子Pager关闭的接口
      * */
     openDrawer() {
-        if (_drawer)
-            _drawer.openDrawer();
+        if (this.refs.drawer) {
+            this.refs.drawer.closeDrawer();
+        }
     }
 
     /**

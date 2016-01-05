@@ -24,9 +24,12 @@ import _ from 'underscore';
 
 // Component
 var ARImage = require('./src/AutoResizingImage.android');
-import {CardItem} from './CardItem';
-import {CardUpperExtra} from './CardUpperExtra';
-import {CardBottomExtra} from './CardBottomExtra';
+import CardItem from './CardItem';
+import CardUpperExtra from './CardUpperExtra';
+import CardBottomExtra from './CardBottomExtra';
+
+// 数据库
+import Database from './Database';
 
 export default class PicturePager extends Component {
 
@@ -39,34 +42,62 @@ export default class PicturePager extends Component {
             dataSource: new ListView.DataSource({
                 rowHasChanged: (row1, row2) => row1 !== row2
             }),
-            loading: false,
-            page: 0,
-            _pictureList: []
-        }
+            loading: false
+        };
+        this.list = [];
+        this.page = 0;
     }
 
     componentDidMount() {
-        this.fetchData(true);
+        // 01 首先加载本地数据
+        Database.loadDataByKeyAndPage(this.props.KEY, 1)
+            .then(list => {
+                this.page = 1;
+                list.forEach(item => this.list.push(item));
+                this.updateListData();
+            })
+            .catch(err => {
+                console.log(err);
+                this.fetchData(true);
+            });
+
+        // 01-2 (异步执行) 判断是否需要读取数据
+        Database.isNeedToRefresh(this.props.KEY)
+            .then(refresh => {
+                if (refresh) {
+                    this.fetchData(true);
+                }
+            });
+    }
+
+    /**
+     * 将内容更新到DataSource
+     * */
+    updateListData() {
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(this.list), // 该方法 将 原有的dataSource对象拷贝 并添加了Rows属性
+            loading: false
+        });
     }
 
     fetchData(refresh) {
-        // 设置更新状态
-        if (refresh) {
-            this.setState({
-                page: 0,
-                _pictureList: []
-            })
-        }
+        if (this.state.loading)
+            return;
         this.setState({
-                page: this.state.page +1,
-                loading: true
+            loading: true
         });
-        fetch(Static.getPictureUrlByPageAndType(this.state.page, this.props.type))
+        if (refresh) {
+            this.list.lenth = 0;
+            this.page = 1;
+        } else {
+            this.page ++;
+        }
+        fetch(Static.getPictureUrlByPageAndKey(this.page, this.props.KEY))
             .then(response => response.json())
             .then((responseData) => {
-                let post = this.state._pictureList.slice();
+                let post = this.list.slice();
                 // 转换 posts -> pictures
-                _.flatten(
+                let imagePosts = _.flatten(
                     responseData.comments.map(item => {
                         let author = item.comment_author;
                         let comment = item.text_content;
@@ -82,14 +113,15 @@ export default class PicturePager extends Component {
                             }
                         });
                     })
-                ).forEach(picture => {
+                );
+                imagePosts.forEach(picture => {
                     post.push(picture);
                 });
-                this.setState({
-                    dataSource: this.state.dataSource.cloneWithRows(post),
-                    loading: false,
-                    _pictureList: post
-                });
+                this.list = post;
+                this.updateListData();
+                // 保存至数据库
+                Database.saveDataByKeyAndPage(imagePosts, this.props.KEY, this.page);
+                if (refresh) Database.saveRefreshTime(this.props.KEY);
             })
             .catch((error) => console.warn(error))
             .done();
@@ -98,18 +130,24 @@ export default class PicturePager extends Component {
 
     render() {
         return(
-            <ListView
-                dataSource={this.state.dataSource}
-                renderRow={this.renderPictureItem}
-                onEndReached={()=>console.log(' ==== Picture End ====')}/>
+            <PullToRefreshViewAndroid
+                style={styles.container}
+                refreshing={this.state.loading}
+                onRefresh={()=>this.fetchData(true)}
+                colors={['#000']}
+                progressBackgroundColor={'#fff'}>
+                <ListView
+                    dataSource={this.state.dataSource}
+                    renderRow={this.renderItem}
+                    onEndReached={()=>this.fetchData(false)}/>
+            </PullToRefreshViewAndroid>
         )
     }
 
     /**
      * Static Render
      * */
-    renderPictureItem = (post, secId, rowId) => {
-        console.log(post.comment, post.comment.length);
+    renderItem = (post, secId, rowId) => {
         if (post.comment && post.comment.trim().length > 0) {
             return (
                 <CardItem>
@@ -146,7 +184,7 @@ export default class PicturePager extends Component {
     }
 
     onImageLoaded(width, height) {
-        console.log(width. height);
+        //console.log(width. height);
     }
 
     createDynamicStyleByHeight() {
@@ -158,6 +196,9 @@ export default class PicturePager extends Component {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
     picture: {
         height: 250,
         margin: 0,

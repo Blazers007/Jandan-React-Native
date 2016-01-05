@@ -4,7 +4,7 @@
 'use strict';
 
 var React = require('react-native');
-var { requireNativeComponent, View} = React;
+var { requireNativeComponent, View, Image, StyleSheet} = React;
 
 class ARImage extends React.Component {
 
@@ -12,15 +12,21 @@ class ARImage extends React.Component {
         super();
         this._onChange = this._onChange.bind(this);
         this.state = {
-            height: 300
+            height: 300,
+            hint: null
         }
     }
 
     render() {
-        return <ARImageView
-            style={this.createDynamicStyleByHeight()}
-            {...this.props}
-            onChange={this._onChange}/>;
+        return (
+            <View>
+                <ARImageView
+                    style={this.createDynamicStyleByHeight()}
+                    {...this.props}
+                    onChange={this._onChange}/>
+                <Image style={styles.hint} source={require('image!ic_gif_corner_24dp')}/>
+            </View>
+        )
     }
 
     _onChange(event: Event) {
@@ -28,7 +34,7 @@ class ARImage extends React.Component {
         let width = event.nativeEvent.width;
         let height = event.nativeEvent.height;
         let asp = width / height;
-        console.log(asp);
+        //console.log(asp);
         if (asp <= 0.4) {
             this.setState({
                 height: parseInt(screenWidth / 1.118)
@@ -46,6 +52,16 @@ class ARImage extends React.Component {
         }
     }
 }
+
+const styles = StyleSheet.create({
+    hint: {
+        position: 'absolute',
+        top: 12,
+        right: 8,
+        height:24,
+        width:24
+    }
+});
 
 ARImage.propTypes = {
     src: React.PropTypes.string,

@@ -33,8 +33,8 @@ export default class Static {
         return MEIZHI_PREFIX + page;
     }
 
-    static getPictureUrlByPageAndType(page, type) {
-        if (type === 'meizhi')
+    static getPictureUrlByPageAndKey(page, type) {
+        if (type === 'MeizhiList')
             return this.getMeizhiUrlByPage(page);
         return this.getWuliaoUrlByPage(page);
     }

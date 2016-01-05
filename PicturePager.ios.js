@@ -58,7 +58,7 @@ export class PicturePager extends Component {
             page: this.state.page +1,
             loading: true
         });
-        fetch(Static.getPictureUrlByPageAndType(this.state.page, this.props.type))
+        fetch(Static.getPictureUrlByPageAndKey(this.state.page, this.props.type))
             .then(response => response.json())
             .then((responseData) => {
                 let post = this.state._pictureList.slice();

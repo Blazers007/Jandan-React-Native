@@ -57,10 +57,10 @@ export default class ReadingPage extends Component {
                         tabBarUnderlineColor='#434343'
                         tabBarActiveTextColor='#343434'
                         tabBarInactiveTextColor='#989898'>
-                        <NewsPager tabLabel="新鲜事" nav={this.props.nav}/>
-                        <PicturePager tabLabel="无聊图" nav={this.props.nav} type="wuliao"/>
-                        <DuanziPager tabLabel="段子" nav={this.props.nav} type="wuliao"/>
-                        <PicturePager tabLabel="梅志图" nav={this.props.nav} type="meizhi"/>
+                        <NewsPager tabLabel="新鲜事" nav={this.props.nav} KEY="NewsList"/>
+                        <PicturePager tabLabel="无聊图" nav={this.props.nav} KEY="WuliaoList"/>
+                        <DuanziPager tabLabel="段子" nav={this.props.nav} KEY="DuanziList"/>
+                        <PicturePager tabLabel="梅志图" nav={this.props.nav} KEY="MeizhiList"/>
                     </ScrollableTabView>
                 </View>
             </DrawerLayoutAndroid>

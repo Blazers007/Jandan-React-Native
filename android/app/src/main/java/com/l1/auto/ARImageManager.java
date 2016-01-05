@@ -52,7 +52,6 @@ public class ARImageManager extends SimpleViewManager<ARSimpleDraweeView> {
     // In JS this is Image.props.source.uri
     @ReactProp(name = "src")
     public void setSource(ARSimpleDraweeView view, @Nullable String source) {
-        Log.e("Source", source);
         view.setup(source);
     }
 

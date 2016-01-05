@@ -18,14 +18,10 @@ const {
         PullToRefreshViewAndroid,
         TouchableNativeFeedback,
         InteractionManager,
-        AsyncStorage
     } = React;
 import Static from './Static';
 import _ from 'underscore';
-
-// vars
-var page = 0;
-var _newsList = [];
+import Database from './Database';
 
 export default class NewsPager extends Component {
 
@@ -37,56 +33,63 @@ export default class NewsPager extends Component {
             }),
             loading: false
         };
+        //
+        this.list = [];
+        this.page = 0;
     }
 
     componentDidMount() {
-        //this.fetchData(true);
-        AsyncStorage.getItem('news', (err, str)=>{
-            let _newsList = JSON.parse(str);
-            this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(_newsList), // 该方法 将 原有的dataSource对象拷贝 并添加了Rows属性
-                loading: false
+        // 01 首先加载本地数据
+        Database.loadDataByKeyAndPage(this.props.KEY, 1)
+            .then(list => {
+                this.page = 1;
+                list.forEach(item => this.list.push(item));
+                this.updateListData();
+            })
+            .catch(err => {
+                console.log(err);
+                this.fetchData(true);
             });
-        });
-        //
 
+        // 01-2 (异步执行) 判断是否需要读取数据
+        Database.isNeedToRefresh(this.props.KEY)
+            .then(refresh => {
+                if (refresh) {
+                    this.fetchData(true);
+                }
+            });
     }
+
 
     /**
      * 根据页码获取
      * */
     fetchData(refresh) {
-        console.log('======================TRY TO REFRESH===========================');
         if (this.state.loading)
             return;
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>SURE TO REFRESH>>>>>>>>>>>>>>>>>>>>>>>>>');
         this.setState({
             loading: true
         });
         if (refresh) {
-            _newsList.lenth = 0;
-            page = 1;
+            this.list.lenth = 0;
+            this.page = 1;
+        } else {
+            this.page ++;
         }
-        page ++;
         // Start Fetching Data
-        fetch(Static.getNewsUrlByPage(page))
+        fetch(Static.getNewsUrlByPage(this.page))
             .then((response) => response.json())
             .then((responseData) => {
-                // 添加
-                var posts = _newsList.slice();
+                // 添加 如果是刷新 list已经被清空
+                var posts = this.list.slice();
                 responseData.posts.forEach(post=>{
-                   posts.push(post);
+                    posts.push(post);
                 });
-                _newsList = posts;
-                // 存储到AsyncStorage
-                AsyncStorage.setItem('news', JSON.stringify(_newsList),(err)=>{
-                    console.log('Done');
-                });
-                //
-                this.setState({
-                    dataSource: this.state.dataSource.cloneWithRows(_newsList), // 该方法 将 原有的dataSource对象拷贝 并添加了Rows属性
-                    loading: false
-                });
+                this.list = posts;
+                this.updateListData();
+                // 存储 仅仅存储该页的内容
+                Database.saveDataByKeyAndPage(responseData.posts, this.props.KEY, this.page);
+                if (refresh) Database.saveRefreshTime(this.props.KEY);
             })
             .catch((error) => {
                 console.warn(error);
@@ -96,6 +99,17 @@ export default class NewsPager extends Component {
             })
             .done();
     }
+
+    /**
+     * 将内容更新到DataSource
+     * */
+    updateListData() {
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(this.list), // 该方法 将 原有的dataSource对象拷贝 并添加了Rows属性
+            loading: false
+        });
+    }
+
 
     /**
      * 如果需要渲染Loading不要替换掉ListView这样会导致ListView重新渲染 Scroll位置也随之回到0
@@ -110,7 +124,7 @@ export default class NewsPager extends Component {
                 progressBackgroundColor={'#fff'}>
                 <ListView
                     dataSource={this.state.dataSource}
-                    renderRow={this.renderNewsItem}
+                    renderRow={this.renderItem}
                     onEndReached={()=>this.fetchData(false)}/>
             </PullToRefreshViewAndroid>
         )
@@ -122,7 +136,7 @@ export default class NewsPager extends Component {
      * render的方法是异步执行 并且执行环境this不等于Class对象 需要预先绑定 或者使用下面的语法定义
      *
      * */
-    renderNewsItem = (post, sectionID, rowID, hightlightRow) => {
+    renderItem = (post, sectionID, rowID, hightlightRow) => {
         return (
             <TouchableNativeFeedback
                 background={TouchableNativeFeedback.Ripple()}

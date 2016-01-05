@@ -24,7 +24,7 @@ const {
         TouchableWithoutFeedback
     } = React;
 
-export class CardUpperExtra extends Component {
+export default class CardUpperExtra extends Component {
     constructor(props) {
         super(props);
         this.state = {

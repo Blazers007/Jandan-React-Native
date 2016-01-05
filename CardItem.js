@@ -10,7 +10,7 @@ const {
         View
     } = React;
 
-export class CardItem extends Component {
+export default class CardItem extends Component {
     constructor(props) {
         super(props);
     }
