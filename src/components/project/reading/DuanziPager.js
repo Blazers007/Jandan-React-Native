@@ -7,13 +7,22 @@ const {
 	ListView,
 	Text,
 	PullToRefreshViewAndroid,
+    View,
 } = React;
 
-import Static from './Static';
-import CardItem from './CardItem';
-import CardUpperExtra from './CardUpperExtra';
-import CardBottomExtra from './CardBottomExtra';
-import Database from './Database';
+import Static from '../../../static/Static';
+
+/**
+ * Extend Key :  bla_liked bla_disliked bla_favorite
+ * */
+
+// 组件
+import CardItem from '../../common/card/CardItem';
+import CardUpperExtra from '../../common/card/CardUpperExtra';
+import CardBottomExtra from '../../common/card/CardBottomExtra';
+
+// 数据库
+import Database from './../../../utils/DatabaseUtil';
 
 
 export default class DuanziPager extends Component {
@@ -36,7 +45,7 @@ export default class DuanziPager extends Component {
 		Database.loadDataByKeyAndPage(this.props.KEY, 1)
 			.then(list => {
 				this.page = 1;
-				list.forEach(item => this.list.push(item));
+				list.forEach(item => {if (item != null) this.list.push(item)});
 				this.updateListData();
 			})
 			.catch(err => {
@@ -57,6 +66,7 @@ export default class DuanziPager extends Component {
      * 更新List
      * */
     updateListData() {
+        //this.list.forEach(item=>console.log(item));
         this.setState({
             dataSource: this.state.dataSource.cloneWithRows(this.list),
             loading: false
@@ -79,10 +89,12 @@ export default class DuanziPager extends Component {
                 // ? TODO:为何必须采用这种方式更新列表？ 直接利用原对象会导致比较指针问题而不能更新？
 				let post = this.list.slice();
 				responseData.comments.forEach(item => {
-					post.push(item);
+                    if (item != null) {
+                        item._id = item.comment_ID;
+                        post.push(item);
+                    }
 				});
                 this.list = post;
-                // 更新
 				this.updateListData();
                 //
                 Database.saveDataByKeyAndPage(responseData.comments, this.props.KEY, this.page);
@@ -91,6 +103,7 @@ export default class DuanziPager extends Component {
 			.catch(error => console.warn(error))
 			.done();
 	}
+
 
 	render(){
 		return(
@@ -109,16 +122,32 @@ export default class DuanziPager extends Component {
 	}
 
 	renderItem = (post) => {
+        if (!post)
+            return(
+                <View></View>
+            );
 		return (
 			<CardItem>
-				<CardUpperExtra
-                    post={post}
-                    shared={false}/>
+				<CardUpperExtra post={post} shared={false}/>
                 <Text style={styles.text}>{post.comment_content}</Text>
-                <CardBottomExtra post={post} type='duanzi' />
+                <CardBottomExtra post={post} type={this.props.KEY} />
 			</CardItem>
 		)
-	}
+	};
+
+    saveData(){
+        let i = 0;
+        if (this.list.some((item, index) => {
+                i = index;
+                return item.bla_favorite;
+            }))
+            console.log('--------------------- '+i+'--------------------------------');
+    }
+
+    componentWillUnmount() {
+        console.log('-------------------------U N M O U N T-----------------------------');
+        this.saveData();
+    }
 }
 
 const styles = StyleSheet.create({

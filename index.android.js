@@ -54,45 +54,31 @@ const NavMenuItems = [
 var _ = require('underscore');
 
 // Menu
-import NavMenu from './NavMenu.android';
+import NavMenu from './src/components/common/NavMenu.android.js';
 // Scene
-import ReadingScene from './ReadingPage';
-import FavoriteScene from './FavoritePage';
-var Test = require('./Test');
+import ReadingScene from './src/components/project/ReadingPage';
+import FavoriteScene from './src/components/project/FavoritePage';
 // SubScene
-import NewsDetail from './NewsDetail.android';
-import ImageLightBox from './ImageLightBox';
+import NewsDetail from './src/components/project/NewsDetail.android.js';
+import ImageLightBox from './src/components/common/ImageLightBox';
 
 class l1 extends Component{
 
     constructor(props) {
         super(props);
         this.state= {
-            bounceValue: new Animated.Value(0),
-            loaded: false,
             selectNavIndex: 0
         };
     }
 
     componentDidMount() {
-        //
-        //this.state.bounceValue.setValue(1.5);     // Start large
-        //Animated.spring(                          // Base: spring, decay, timing
-        //    this.state.bounceValue,                 // Animate `bounceValue`
-        //    {
-        //        toValue: 0.8,                         // Animate to smaller size
-        //        friction: 1                     // Bouncier spring
-        //    }
-        //).start();
-        //setTimeout(()=>this.setState({loaded: true}), 2000);
+        if (this.refs.drawer) {
+            _drawer = this.refs.drawer;
+        }
     }
 
 
     render() {
-        //if (!this.state.loaded) {
-        //    return this.renderLoadingView();
-        //}
-        // Loading Complete
         return (
             <DrawerLayoutAndroid
                 ref='drawer'
@@ -132,9 +118,7 @@ class l1 extends Component{
         _drawer.closeDrawer();
         let aboutToJump = NavMenuItems[index].tag;
         // 寻找target
-        let target = _navigator.getCurrentRoutes().find((item)=>{
-            return item.name === aboutToJump;
-        });
+        let target = _navigator.getCurrentRoutes().find(item => item.name === aboutToJump);
         if(target) {
             // JUMP
             _navigator.jumpTo(target);
@@ -151,8 +135,8 @@ class l1 extends Component{
      * 提供给子Pager关闭的接口
      * */
     openDrawer() {
-        if (this.refs.drawer) {
-            this.refs.drawer.closeDrawer();
+        if (_drawer) {
+            _drawer.openDrawer();
         }
     }
 

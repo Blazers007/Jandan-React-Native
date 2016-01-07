@@ -7,7 +7,7 @@ import React from 'react-native';
 const {Component} = React;
 
 //
-import Static from './Static';
+import Static from 'src/static/Static';
 
 /**
  * 尝试抽象各页面的主要功能 通过继承方式减少重复代码

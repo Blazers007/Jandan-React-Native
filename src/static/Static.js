@@ -21,6 +21,11 @@ const DUANZI_PREFIX = 'http://i.jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_c
 
 export default class Static {
 
+    static NEWS_TYPE = 'News';
+    static WULIAO_TYPE = 'Wuliao';
+    static DUANZI_TYPE = 'Duanzi';
+    static MEIZHI_TYPE = 'Meizhi';
+
     static getNewsUrlByPage(page) {
         return NEWS_PREFIX + page + NEWS_SUFFIX;
     }
@@ -46,5 +51,4 @@ export default class Static {
     static getNewsContentUrl(id) {
         return NEWS_CONTENT_PREFIX + id + NEWS_CONTENT_SUFFIX;
     }
-
 }

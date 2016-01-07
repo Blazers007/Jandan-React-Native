@@ -16,7 +16,11 @@ const {
 // 渐变色组件
 import LinearGradient from 'react-native-linear-gradient';
 // TabLayout组件
-var ScrollableTabView = require('react-native-scrollable-tab-view');
+import ScrollableTabView from 'react-native-scrollable-tab-view';
+
+// 页面组件
+import FavoritePicture from './favorite/FavoritePicture';
+import FavoriteDuanzi from './favorite/FavoriteDuanzi';
 
 // Var Let 变量
 let currentPager = 0;
@@ -45,8 +49,8 @@ export default class FavoritePage extends Component {
                         tabBarActiveTextColor='#343434'
                         tabBarInactiveTextColor='#989898'>
                         <View tabLabel="新鲜事" nav={this.props.nav} />
-                        <View tabLabel="图片" nav={this.props.nav} />
-                        <View tabLabel="段子" nav={this.props.nav} />
+                        <FavoritePicture tabLabel="图片" nav={this.props.nav} />
+                        <FavoriteDuanzi tabLabel="段子" nav={this.props.nav} />
                     </ScrollableTabView>
                 </View>
             </DrawerLayoutAndroid>

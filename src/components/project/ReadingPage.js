@@ -19,11 +19,9 @@ import LinearGradient from 'react-native-linear-gradient';
 var ScrollableTabView = require('react-native-scrollable-tab-view');
 
 // -- 自身组件
-import NewsPager from './NewsPager.js';
-import PicturePager from './PicturePager.android';
-import DuanziPager from './DuanziPager.js';
-
-var Test = require('./Test');
+import NewsPager from './reading/NewsPager.js';
+import PicturePager from './reading/PicturePager.android.js';
+import DuanziPager from './reading/DuanziPager.js';
 
 // Const 常量
 const toolbarActions = [

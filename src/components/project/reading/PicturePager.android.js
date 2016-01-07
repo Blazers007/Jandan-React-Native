@@ -19,17 +19,17 @@ const {
         PullToRefreshViewAndroid,
     } = React;
 
-import Static from './Static';
+import Static from '../../../static/Static';
 import _ from 'underscore';
 
 // Component
-var ARImage = require('./src/AutoResizingImage.android');
-import CardItem from './CardItem';
-import CardUpperExtra from './CardUpperExtra';
-import CardBottomExtra from './CardBottomExtra';
+var ARImage = require('./../../common/AutoResizingImage.android.js');
+import CardItem from '../../common/card/CardItem';
+import CardUpperExtra from '../../common/card/CardUpperExtra';
+import CardBottomExtra from '../../common/card/CardBottomExtra';
 
 // 数据库
-import Database from './Database';
+import Database from './../../../utils/DatabaseUtil';
 
 export default class PicturePager extends Component {
 
@@ -103,9 +103,11 @@ export default class PicturePager extends Component {
                         let comment = item.text_content;
                         let date = item.comment_date;
                         let pics = item.pics;
+                        let comment_ID = item.comment_ID;
                         // 遍历Pic
-                        return pics.map(pic => {
+                        return pics.map((pic, index) => {
                             return {
+                                _id: comment_ID + '_' + index,
                                 comment_author: author,
                                 comment: comment,
                                 comment_date: date,
@@ -114,9 +116,7 @@ export default class PicturePager extends Component {
                         });
                     })
                 );
-                imagePosts.forEach(picture => {
-                    post.push(picture);
-                });
+                imagePosts.forEach(picture => post.push(picture));
                 this.list = post;
                 this.updateListData();
                 // 保存至数据库
@@ -157,8 +157,8 @@ export default class PicturePager extends Component {
                             <ARImage src={post.pic}/>
                         </View>
                     </TouchableHighlight>
-                    <Text style={styles.text}>        {post.comment.trim()}</Text>
-                    <CardBottomExtra/>
+                    <Text style={styles.text}>{post.comment.trim()}</Text>
+                    <CardBottomExtra post={post} type={this.props.KEY}/>
                 </CardItem>
             )
         }
@@ -170,7 +170,7 @@ export default class PicturePager extends Component {
                         <ARImage src={post.pic}/>
                     </View>
                 </TouchableHighlight>
-                <CardBottomExtra/>
+                <CardBottomExtra post={post} type={this.props.KEY}/>
             </CardItem>
         )
     };

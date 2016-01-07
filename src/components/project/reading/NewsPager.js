@@ -19,9 +19,9 @@ const {
         TouchableNativeFeedback,
         InteractionManager,
     } = React;
-import Static from './Static';
+import Static from '../../../static/Static';
 import _ from 'underscore';
-import Database from './Database';
+import Database from './../../../utils/DatabaseUtil';
 
 export default class NewsPager extends Component {
 

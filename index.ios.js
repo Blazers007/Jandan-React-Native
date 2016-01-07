@@ -15,9 +15,9 @@ var {
     } = React;
 
 // TabLayout组件
-import {NewsPager} from './NewsPager.js';
-import {DuanziPager} from './DuanziPager.js';
-import {PicturePager} from './PicturePager.ios';
+import {NewsPager} from './src/components/project/reading/NewsPager.js';
+import {DuanziPager} from './src/components/project/reading/DuanziPager.js';
+import {PicturePager} from './src/components/project/reading/PicturePager.ios.js';
 
 class l1 extends React.Component {
 

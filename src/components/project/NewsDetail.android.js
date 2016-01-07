@@ -7,7 +7,7 @@
 import React from 'react-native';
 
 var WebViewAndroid = require('react-native-webview-android');
-import Static from './Static';
+import Static from '../../static/Static';
 
 const {
 		Component,

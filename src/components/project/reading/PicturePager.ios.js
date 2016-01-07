@@ -17,13 +17,13 @@ const {
     View,
     } = React;
 
-import Static from './Static';
+import Static from '../../../static/Static';
 import _ from 'underscore';
 
 // Component
-import {CardItem} from './CardItem';
-import {CardUpperExtra} from './CardUpperExtra';
-import {CardBottomExtra} from './CardBottomExtra';
+import {CardItem} from '../../common/card/CardItem';
+import {CardUpperExtra} from '../../common/card/CardUpperExtra';
+import {CardBottomExtra} from '../../common/card/CardBottomExtra';
 
 export class PicturePager extends Component {
 

@@ -19,7 +19,7 @@ export default class NavMenu extends Component {
     constructor(props) {
         super(props);
         this.state= {
-            selectNavIndex: this.props.selectNavIndex | 0
+            selectNavIndex: this.props.selectNavIndex || 0
         }
     }
     render() {
@@ -48,14 +48,12 @@ export default class NavMenu extends Component {
     }
 
     _handleClick(index) {
-        InteractionManager.runAfterInteractions(()=>{
-            this.props.onPress(index);
-            if (index !== this.state.selectNavIndex) {
-                this.setState({
-                    selectNavIndex: index
-                });
-            }
-        });
+        this.props.onPress(index);
+        if (index !== this.state.selectNavIndex) {
+            this.setState({
+                selectNavIndex: index
+            });
+        }
     }
 }
 
